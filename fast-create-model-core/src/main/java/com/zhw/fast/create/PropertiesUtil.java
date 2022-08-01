@@ -1,7 +1,5 @@
 package com.zhw.fast.create;
 
-import lombok.extern.slf4j.Slf4j;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -17,6 +15,8 @@ import java.util.stream.Stream;
 public class PropertiesUtil {
 
     private static final PropertiesUtil instance = new PropertiesUtil();
+    private static final String STR_TRUE = String.valueOf(Boolean.TRUE);
+    private static final String STR_FALSE = String.valueOf(Boolean.FALSE);
 
     public static PropertiesUtil getInstances() {
         return instance;
@@ -41,10 +41,12 @@ public class PropertiesUtil {
 
         // common
         PropertiesInfo.CommonInfo commonInfo = new PropertiesInfo.CommonInfo();
-        commonInfo.setService(Boolean.valueOf(properties.getProperty("fast.create.common.service")));
-        commonInfo.setInnerService(Boolean.valueOf(properties.getProperty("fast.create.common.innerService")));
+        commonInfo.setService(Boolean.valueOf(properties.getProperty("fast.create.common.service", STR_TRUE)));
+        commonInfo.setInnerService(Boolean.valueOf(properties.getProperty("fast.create.common.innerService", STR_TRUE)));
         commonInfo.setMapperDir(properties.getProperty("fast.create.common.mapperDir"));
-        commonInfo.setExtendMapper(Boolean.valueOf(properties.getProperty("fast.create.common.extendMapper")));
+        commonInfo.setExtendMapper(Boolean.valueOf(properties.getProperty("fast.create.common.extendMapper", STR_FALSE)));
+        commonInfo.setBasePath(properties.getProperty("fast.create.common.basePath"));
+        commonInfo.setLombok(Boolean.valueOf(properties.getProperty("fast.create.common.lombok", STR_TRUE)));
 
         // models
         // fast.create.model.modelName
@@ -65,7 +67,7 @@ public class PropertiesUtil {
         for (String modelName : modelNameSet) {
             PropertiesInfo.ModelInfo modelInfo = new PropertiesInfo.ModelInfo();
             modelInfo.setModelName(modelName);
-            modelInfo.setDoCreate(Boolean.valueOf(properties.getProperty(String.format(doCreate, modelName))));
+            modelInfo.setDoCreate(Boolean.valueOf(properties.getProperty(String.format(doCreate, modelName), STR_FALSE)));
             modelInfo.setTables(
                     Stream.of(properties.getProperty(String.format(tables, modelName)).split(","))
                             .map(t -> t.trim()).collect(Collectors.toList())

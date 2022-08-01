@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 public class PropertiesInfoTest {
 
     @Test
+    @DisplayName("验证文件读取是否正常")
     public void getPropertiesInfo() throws IOException {
         PropertiesInfo info = PropertiesUtil.getInstances().getPropertiesInfo("fast-create-model.properties");
 
@@ -40,11 +41,14 @@ public class PropertiesInfoTest {
         Assertions.assertEquals(commonInfo.getInnerService(), Boolean.TRUE);
         Assertions.assertEquals(commonInfo.getMapperDir(), "dao");
         Assertions.assertEquals(commonInfo.getExtendMapper(), Boolean.TRUE);
+        Assertions.assertEquals(commonInfo.getBasePath(), "com.zhw.fast.create");
+        Assertions.assertEquals(commonInfo.getLombok(), Boolean.TRUE);
 
         List<ModelInfo> modelInfoList = info.getModelInfoList();
         Assertions.assertNotNull(modelInfoList);
 
-        Map<String, ModelInfo> map = modelInfoList.stream().collect(Collectors.toMap(v -> v.getModelName(), Function.identity()));
+        Map<String, ModelInfo> map = modelInfoList.stream()
+                .collect(Collectors.toMap(v -> v.getModelName(), Function.identity()));
         ModelInfo hello = map.get("hello");
         Assertions.assertEquals(hello.getDoCreate(), Boolean.FALSE);
         Assertions.assertEquals(hello.getTables(), Arrays.asList("aaa", "bbb", "ccc"));

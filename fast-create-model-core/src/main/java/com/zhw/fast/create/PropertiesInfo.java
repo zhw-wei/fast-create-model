@@ -32,6 +32,8 @@ public class PropertiesInfo {
         private Boolean innerService;
         private String mapperDir;
         private Boolean extendMapper;
+        private String basePath;
+        private Boolean lombok;
     }
 
     @Data
