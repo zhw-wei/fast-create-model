@@ -36,6 +36,7 @@ public class PropertiesInfo {
 
     @Data
     public static class ModelInfo{
+        private String modelName;
         private Boolean doCreate;
         private List<String> tables;
 

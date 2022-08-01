@@ -1,5 +1,7 @@
 package com.zhw.fast.create;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -8,14 +10,24 @@ import java.util.stream.Stream;
 
 /**
  * 读取和解析properties
+ *
  * @author: zhw
  * @create: 2022-07-31 22:46
  **/
 public class PropertiesUtil {
 
-    public PropertiesInfo getPropertiesInfo(String fileName) throws IOException {
+    private static final PropertiesUtil instance = new PropertiesUtil();
 
-        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(fileName);
+    public static PropertiesUtil getInstances() {
+        return instance;
+    }
+
+    private PropertiesUtil() {
+    }
+
+    public PropertiesInfo getPropertiesInfo(String filePath) throws IOException {
+
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream(filePath);
 
         Properties properties = new Properties();
         properties.load(inputStream);
@@ -36,22 +48,23 @@ public class PropertiesUtil {
 
         // models
         // fast.create.model.modelName
-        List<String> modelNameList = new ArrayList<>();
+        Set<String> modelNameSet = new HashSet<>();
         final String prefix = "fast.create.model";
         for (Object obj : properties.keySet()) {
             String key = String.valueOf(obj);
-            if(key.contains(prefix)){
-                String modelName = key.split("\\.")[3];
-                modelNameList.add(modelName);
-            }
+            if (!key.contains(prefix)) continue;
+
+            String modelName = key.split("\\.")[3];
+            modelNameSet.add(modelName);
         }
 
         List<PropertiesInfo.ModelInfo> modelInfoList = new ArrayList<>();
 
         String doCreate = "fast.create.model.%s.doCreate";
         String tables = "fast.create.model.%s.tables";
-        for (String modelName : modelNameList) {
+        for (String modelName : modelNameSet) {
             PropertiesInfo.ModelInfo modelInfo = new PropertiesInfo.ModelInfo();
+            modelInfo.setModelName(modelName);
             modelInfo.setDoCreate(Boolean.valueOf(properties.getProperty(String.format(doCreate, modelName))));
             modelInfo.setTables(
                     Stream.of(properties.getProperty(String.format(tables, modelName)).split(","))
