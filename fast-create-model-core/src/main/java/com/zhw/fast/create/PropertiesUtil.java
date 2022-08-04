@@ -70,7 +70,7 @@ public class PropertiesUtil {
             modelInfo.setDoCreate(Boolean.valueOf(properties.getProperty(String.format(doCreate, modelName), STR_FALSE)));
             modelInfo.setTables(
                     Stream.of(properties.getProperty(String.format(tables, modelName)).split(","))
-                            .map(t -> t.trim()).collect(Collectors.toList())
+                            .map(String::trim).collect(Collectors.toList())
             );
             modelInfoList.add(modelInfo);
         }
